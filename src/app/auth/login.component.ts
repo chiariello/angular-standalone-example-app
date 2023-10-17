@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
@@ -8,6 +8,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../services/auth.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ import {AuthService} from "../services/auth.service";
   imports: [CommonModule, MatCardModule, MatButtonModule, MatInputModule, MatSelectModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule],
   template: `
     <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-      <form (ngSubmit)="authService.login('', '')" novalidate [formGroup]="form">
+      <form (ngSubmit)="login(form)" novalidate [formGroup]="form">
         <mat-card class="login-card">
           <mat-card-header>
             <mat-card-title class="pb-3">Login</mat-card-title>
@@ -35,7 +36,7 @@ import {AuthService} from "../services/auth.service";
                 <mat-form-field>
                   <mat-label>Password</mat-label>
                   <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-                  <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                  <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                   </button>
                 </mat-form-field>
@@ -47,7 +48,7 @@ import {AuthService} from "../services/auth.service";
             <mat-checkbox>
               Ricordami
             </mat-checkbox>
-            <button mat-raised-button color="accent">Login</button>
+            <button type="submit" mat-raised-button color="accent">Login</button>
           </mat-card-actions>
         </mat-card>
       </form>
@@ -65,17 +66,26 @@ import {AuthService} from "../services/auth.service";
     `
   ]
 })
-export default class LoginComponent implements OnInit{
+export default class LoginComponent{
   hide = true;
-  authService = inject(AuthService);
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
+  }
 
   form = inject(FormBuilder).group({
     email: ['', [Validators.email, Validators.required]],
     password: ['', [Validators.required]],
   });
-  ngOnInit(): void {
 
+  login(form: FormGroup){
+    this.authService
+      .login(form.value.email, form.value.password)
+      .subscribe(result => {
+        localStorage.setItem('token', result.data.token)
+        this.router.navigate(['admin']);
+      });
   }
-
 
 }
