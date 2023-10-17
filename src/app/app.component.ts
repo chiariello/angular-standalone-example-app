@@ -8,11 +8,12 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {MatIconModule} from "@angular/material/icon";
 import {AuthService} from "./services/auth.service";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatButtonModule, MatListModule, MatIconModule, RouterLink, NavbarComponent, MatSidenavModule],
+  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatButtonModule, MatListModule, MatIconModule, RouterLink, NavbarComponent, MatSidenavModule, MatInputModule],
   template: `
     <div class="main-container">
       <app-navbar
@@ -21,7 +22,11 @@ import {AuthService} from "./services/auth.service";
       </app-navbar>
       <mat-sidenav-container class="sidenav-container">
         <mat-sidenav
-          #sidenav mode="side" [opened]="authService.isUserLogged()">Sidenav content</mat-sidenav>
+          #sidenav mode="side" [opened]="authService.isUserLogged()">
+          <mat-nav-list *ngFor="let item of menu">
+            <a mat-list-item [routerLink]="item.path">{{item.title}}</a>
+          </mat-nav-list>
+        </mat-sidenav>
         <mat-sidenav-content>
           <router-outlet></router-outlet>
         </mat-sidenav-content>
@@ -42,12 +47,22 @@ import {AuthService} from "./services/auth.service";
       .sidenav-container{
         height: 100%;
       }
+      .sidenav{
+        min-width: 150px;
+      }
     `
   ],
 })
 export class AppComponent{
 
   authService = inject(AuthService);
-  title = 'Serviziosalute Manage';
+
+
+  menu = [
+    {
+      title: 'Home',
+      path: 'admin'
+    }
+  ];
 
 }

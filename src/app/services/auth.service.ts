@@ -15,11 +15,15 @@ export class AuthService {
   }
 
   logout(){
-    localStorage.removeItem('token');
+    return this.http.get(environment.base_path + '/global/logout');
   }
 
   isUserLogged(): boolean{
     return localStorage.getItem('token') != null;
+  }
+
+  getAuthorizationToken(){
+    return localStorage.getItem('token');
   }
 
 }

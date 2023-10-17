@@ -48,7 +48,7 @@ import {Router} from "@angular/router";
             <mat-checkbox>
               Ricordami
             </mat-checkbox>
-            <button type="submit" mat-raised-button color="accent">Login</button>
+            <button type="submit" mat-raised-button color="primary">Login</button>
           </mat-card-actions>
         </mat-card>
       </form>
@@ -83,7 +83,7 @@ export default class LoginComponent{
     this.authService
       .login(form.value.email, form.value.password)
       .subscribe(result => {
-        localStorage.setItem('token', result.data.token)
+        localStorage.setItem('token', result.data.token);
         this.router.navigate(['admin']);
       });
   }
